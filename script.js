@@ -72,25 +72,6 @@ document.querySelectorAll('.btn').forEach(button => {
     });
 });
 
-// Simple typewriter effect for hero title (optional)
-function typeWriter(element, text, speed = 50) {
-    let i = 0;
-    element.innerHTML = '';
-    
-    function type() {
-        if (i < text.length) {
-            element.innerHTML += text.charAt(i);
-            i++;
-            setTimeout(type, speed);
-        }
-    }
-    
-    type();
-}
-
-// Uncomment the line below to enable typewriter effect
-// typeWriter(document.querySelector('.hero-title'), 'Never Miss Your Metro Again');
-
 // Add scroll-to-top functionality
 window.addEventListener('scroll', function() {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -182,3 +163,358 @@ const statsSection = document.querySelector('.stats');
 if (statsSection) {
     statsObserver.observe(statsSection);
 }
+
+// MRT Timetable Functionality
+class MRTTimetable {
+    constructor() {
+        this.timetableData = {};
+        this.currentStation = '';
+        this.clockElement = document.getElementById('clock');
+        this.dayDisplay = document.getElementById('day-display');
+        this.scheduleDiv = document.getElementById('schedule');
+        this.platform1 = document.getElementById('platform1');
+        this.platform2 = document.getElementById('platform2');
+        this.arrivalMessage = document.getElementById('arrival-message');
+        
+        // Custom dropdown elements
+        this.customDropdown = document.getElementById('station-dropdown');
+        this.selectedOption = document.getElementById('selected-station');
+        this.stationOptions = document.getElementById('station-options');
+        this.stationColumns = document.querySelector('.station-columns');
+        
+        this.init();
+    }
+    
+    async init() {
+        await this.loadTimetableData();
+        this.setupEventListeners();
+        this.updateClock();
+        this.setupStations();
+        this.startClockInterval();
+    }
+    
+    async loadTimetableData() {
+        try {
+            const response = await fetch('mrt-6.json');
+            this.timetableData = await response.json();
+            console.log('Timetable data loaded successfully');
+        } catch (error) {
+            console.error('Error loading timetable data:', error);
+        }
+    }
+    
+    setupEventListeners() {
+        // Confirm button
+        const confirmBtn = document.getElementById('confirm');
+        confirmBtn.addEventListener('click', () => {
+            this.showSchedule();
+        });
+        
+        // First and Last train buttons
+        document.getElementById('firstTrain').addEventListener('click', () => {
+            this.showFirstTrain();
+        });
+        
+        document.getElementById('lastTrain').addEventListener('click', () => {
+            this.showLastTrain();
+        });
+        
+        // Custom dropdown functionality
+        this.selectedOption.addEventListener('click', () => {
+            this.toggleDropdown();
+        });
+        
+        this.selectedOption.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.toggleDropdown();
+            }
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!this.customDropdown.contains(e.target)) {
+                this.closeDropdown();
+            }
+        });
+    }
+    
+    setupStations() {
+        const stations = [
+            'Uttara North', 'Uttara Center', 'Uttara South', 'Pallabi', 'Mirpur-11',
+            'Mirpur-10', 'Kazipara', 'Shewrapara', 'Agargoan', 'Bijoy Sarani',
+            'Farmgate', 'Karwan Bazar', 'Shahbag', 'Dhaka University', 'Bangladesh Secretariat',
+            'Motijheel', 'Kamalapur'
+        ];
+        
+        // Clear existing options
+        this.stationColumns.innerHTML = '';
+        
+        stations.forEach(station => {
+            const option = document.createElement('div');
+            option.className = 'station-option';
+            option.textContent = station;
+            option.addEventListener('click', () => {
+                this.selectStation(station);
+            });
+            this.stationColumns.appendChild(option);
+        });
+    }
+    
+    selectStation(station) {
+        this.currentStation = station;
+        this.selectedOption.querySelector('span').textContent = station;
+        this.closeDropdown();
+        
+        // Update selected state
+        document.querySelectorAll('.station-option').forEach(option => {
+            option.classList.remove('selected');
+        });
+        document.querySelector(`.station-option:contains("${station}")`);
+        
+        // Find and highlight the selected option
+        document.querySelectorAll('.station-option').forEach(option => {
+            if (option.textContent === station) {
+                option.classList.add('selected');
+            }
+        });
+    }
+    
+    toggleDropdown() {
+        const isOpen = this.customDropdown.getAttribute('aria-expanded') === 'true';
+        if (isOpen) {
+            this.closeDropdown();
+        } else {
+            this.openDropdown();
+        }
+    }
+    
+    openDropdown() {
+        this.customDropdown.setAttribute('aria-expanded', 'true');
+        this.stationOptions.style.display = 'block';
+    }
+    
+    closeDropdown() {
+        this.customDropdown.setAttribute('aria-expanded', 'false');
+        this.stationOptions.style.display = 'none';
+    }
+    
+    updateClock() {
+        const now = new Date();
+        const options = { 
+            timeZone: 'Asia/Dhaka', 
+            hour: '2-digit', 
+            minute: '2-digit', 
+            second: '2-digit', 
+            hour12: false 
+        };
+        
+        if (this.clockElement) {
+            this.clockElement.textContent = now.toLocaleTimeString('en-US', options);
+        }
+        
+        this.updateDayDisplay(now);
+    }
+    
+    updateDayDisplay(date) {
+        if (!this.dayDisplay) return;
+        
+        const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const dayOfWeek = date.getDay();
+        this.dayDisplay.textContent = daysOfWeek[dayOfWeek];
+        
+        // Add holiday styling for Fridays (weekly holiday in Bangladesh)
+        if (dayOfWeek === 5) {
+            this.dayDisplay.classList.add('holiday');
+        } else {
+            this.dayDisplay.classList.remove('holiday');
+        }
+    }
+    
+    startClockInterval() {
+        setInterval(() => {
+            this.updateClock();
+        }, 1000);
+    }
+    
+    showSchedule() {
+        if (!this.currentStation) {
+            alert('Please select a station first');
+            return;
+        }
+        
+        const stationData = this.timetableData[this.currentStation];
+        if (!stationData) {
+            alert('No timetable data available for this station');
+            return;
+        }
+        
+        this.displayPlatformInfo(stationData);
+        this.scrollToSchedule();
+    }
+    
+    displayPlatformInfo(stationData) {
+        const now = new Date();
+        const currentTime = now.toLocaleTimeString('en-US', { 
+            timeZone: 'Asia/Dhaka', 
+            hour: '2-digit', 
+            minute: '2-digit', 
+            hour12: false 
+        });
+        
+        // Clear previous content
+        this.platform1.innerHTML = '';
+        this.platform2.innerHTML = '';
+        
+        let platformCount = 0;
+        
+        Object.keys(stationData).forEach(direction => {
+            const times = stationData[direction];
+            const platformElement = platformCount === 0 ? this.platform1 : this.platform2;
+            
+            // Create platform header
+            const header = document.createElement('h3');
+            header.textContent = `To ${direction}`;
+            platformElement.appendChild(header);
+            
+            // Create time list
+            const timeList = document.createElement('ul');
+            timeList.className = 'time-list';
+            
+            // Get next few trains
+            const nextTrains = this.getNextTrains(times, currentTime, 5);
+            
+            nextTrains.forEach((time, index) => {
+                const listItem = document.createElement('li');
+                
+                const timeSpan = document.createElement('span');
+                timeSpan.className = 'time';
+                timeSpan.textContent = time;
+                
+                const statusSpan = document.createElement('span');
+                statusSpan.className = 'status';
+                
+                if (index === 0) {
+                    statusSpan.textContent = 'Next Train';
+                    statusSpan.className = 'status next-train';
+                } else {
+                    const timeDiff = this.getTimeDifference(currentTime, time);
+                    statusSpan.textContent = `in ${timeDiff} min`;
+                }
+                
+                listItem.appendChild(timeSpan);
+                listItem.appendChild(statusSpan);
+                timeList.appendChild(listItem);
+            });
+            
+            platformElement.appendChild(timeList);
+            platformCount++;
+        });
+    }
+    
+    getNextTrains(times, currentTime, count) {
+        const current = this.timeToMinutes(currentTime);
+        const nextTrains = [];
+        
+        for (let time of times) {
+            const trainTime = this.timeToMinutes(time);
+            if (trainTime >= current) {
+                nextTrains.push(time);
+                if (nextTrains.length >= count) break;
+            }
+        }
+        
+        // If we don't have enough trains for today, add some from tomorrow
+        if (nextTrains.length < count) {
+            const remaining = count - nextTrains.length;
+            for (let i = 0; i < remaining && i < times.length; i++) {
+                nextTrains.push(times[i] + ' (next day)');
+            }
+        }
+        
+        return nextTrains;
+    }
+    
+    timeToMinutes(timeString) {
+        const [hours, minutes] = timeString.split(':').map(Number);
+        return hours * 60 + minutes;
+    }
+    
+    getTimeDifference(currentTime, trainTime) {
+        const current = this.timeToMinutes(currentTime);
+        const train = this.timeToMinutes(trainTime);
+        return Math.max(0, train - current);
+    }
+    
+    scrollToSchedule() {
+        const scheduleSection = document.querySelector('.platform-info-container');
+        if (scheduleSection) {
+            scheduleSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+    
+    showFirstTrain() {
+        if (!this.currentStation) {
+            alert('Please select a station first');
+            return;
+        }
+        
+        const stationData = this.timetableData[this.currentStation];
+        if (!stationData) {
+            alert('No timetable data available for this station');
+            return;
+        }
+        
+        let message = `<h3>First Trains from ${this.currentStation}:</h3>`;
+        Object.keys(stationData).forEach(direction => {
+            const firstTrain = stationData[direction][0];
+            message += `<p><strong>To ${direction}:</strong> ${firstTrain}</p>`;
+        });
+        
+        this.showArrivalMessage(message);
+    }
+    
+    showLastTrain() {
+        if (!this.currentStation) {
+            alert('Please select a station first');
+            return;
+        }
+        
+        const stationData = this.timetableData[this.currentStation];
+        if (!stationData) {
+            alert('No timetable data available for this station');
+            return;
+        }
+        
+        let message = `<h3>Last Trains from ${this.currentStation}:</h3>`;
+        Object.keys(stationData).forEach(direction => {
+            const times = stationData[direction];
+            const lastTrain = times[times.length - 1];
+            message += `<p><strong>To ${direction}:</strong> ${lastTrain}</p>`;
+        });
+        
+        this.showArrivalMessage(message);
+    }
+    
+    showArrivalMessage(message) {
+        this.arrivalMessage.innerHTML = message;
+        this.arrivalMessage.style.display = 'block';
+        this.arrivalMessage.classList.add('show');
+        
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            this.arrivalMessage.classList.remove('show');
+            setTimeout(() => {
+                this.arrivalMessage.style.display = 'none';
+            }, 300);
+        }, 5000);
+    }
+}
+
+// Initialize MRT Timetable when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Only initialize if we're on a page that has the timetable elements
+    if (document.getElementById('clock')) {
+        new MRTTimetable();
+    }
+});

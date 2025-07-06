@@ -19,6 +19,7 @@
             </div>
             <ul class="nav-menu">
                 <li><a href="#home">Home</a></li>
+                <li><a href="#timetable">Timetable</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#contact">Contact</a></li>
@@ -38,7 +39,7 @@
                 <h1 class="hero-title">Never Miss Your Metro Again</h1>
                 <p class="hero-subtitle">Get real-time metro schedules, plan your journey, and stay on track with accurate timing information.</p>
                 <div class="hero-buttons">
-                    <a href="#features" class="btn btn-primary">Explore Features</a>
+                    <a href="#timetable" class="btn btn-primary">Check Timetable</a>
                     <a href="https://github.com/Owais5514/Metro-timings" class="btn btn-secondary" target="_blank">
                         <i class="fab fa-github"></i> View on GitHub
                     </a>
@@ -48,6 +49,60 @@
                 <div class="metro-illustration">
                     <i class="fas fa-train"></i>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Metro Timetable Section -->
+    <section id="timetable" class="timetable">
+        <div class="container">
+            <h2 class="section-title">Dhaka MRT-6 Live Timetable</h2>
+            
+            <!-- Clock Display -->
+            <div class="clock-container">
+                <div class="digital-clock" id="clock">00:00:00</div>
+                <div class="day-display" id="day-display"></div>
+            </div>
+
+            <!-- Station Selection -->
+            <div class="station-selector">
+                <label for="station-dropdown" id="station-dropdown-label">Select Your Current Station:</label>
+                <div class="custom-dropdown-container">
+                    <div class="custom-dropdown-wrapper">
+                        <div class="custom-dropdown" id="station-dropdown">
+                            <div class="selected-option" id="selected-station" role="combobox" aria-haspopup="listbox" aria-expanded="false" aria-controls="station-options" tabindex="0">
+                                <span>Select a station</span>
+                                <i class="dropdown-arrow">▼</i>
+                            </div>
+                            <div class="dropdown-options" id="station-options" role="listbox" aria-labelledby="station-dropdown-label">
+                                <div class="station-columns">
+                                    <!-- Options will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                        <button id="confirm" class="confirm-btn">Confirm</button>
+                    </div>
+                    <!-- Hidden select element to maintain compatibility -->
+                    <select id="station" style="display: none;"></select>
+                </div>
+            </div>
+
+            <!-- Train Control Buttons -->
+            <div class="train-controls">
+                <button id="firstTrain" class="train-btn">First Train</button>
+                <button id="lastTrain" class="train-btn">Last Train</button>
+            </div>
+
+            <!-- Arrival Message Container -->
+            <div id="arrival-message" class="arrival-message"></div>
+
+            <!-- Schedule Display -->
+            <div id="schedule" class="schedule-display"></div>
+
+            <!-- Platform Information -->
+            <div class="platform-info-container">
+                <div class="platform" id="platform1"></div>
+                <div class="platform" id="platform2"></div>
             </div>
         </div>
     </section>
