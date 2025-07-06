@@ -1,0 +1,24 @@
+2025-07-06 10:44:59,279 - INFO - Starting Metro updates RSS generation process...
+2025-07-06 10:44:59,279 - INFO - Local time: 2025-07-06 10:44:59  (Timezone Offset: UTC+06:00)
+2025-07-06 10:45:00,519 - WARNING - No content fetched from any source
+2025-07-06 10:45:00,519 - INFO - Fetching updates from Dhaka Metro Rail: https://dmtcl.gov.bd/site/notices
+2025-07-06 10:45:01,118 - WARNING - Error fetching https://dmtcl.gov.bd/site/notices: 404 Client Error: Not Found for url: https://dmtcl.gov.bd/site/notices. Retrying in 5 seconds... (Attempt 1/3)
+2025-07-06 10:45:06,518 - WARNING - Error fetching https://dmtcl.gov.bd/site/notices: 404 Client Error: Not Found for url: https://dmtcl.gov.bd/site/notices. Retrying in 10 seconds... (Attempt 2/3)
+2025-07-06 10:45:16,900 - ERROR - Error fetching https://dmtcl.gov.bd/site/notices after 3 attempts: 404 Client Error: Not Found for url: https://dmtcl.gov.bd/site/notices
+2025-07-06 10:45:16,900 - ERROR - Error parsing content from Dhaka Metro Rail: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+2025-07-06 10:45:16,901 - INFO - Fetching updates from Bangladesh Railway: https://railway.gov.bd/site/notices
+2025-07-06 10:45:17,247 - WARNING - Error fetching https://railway.gov.bd/site/notices: 404 Client Error: Not Found for url: https://railway.gov.bd/site/notices. Retrying in 5 seconds... (Attempt 1/3)
+2025-07-06 10:45:22,696 - WARNING - Error fetching https://railway.gov.bd/site/notices: 404 Client Error: Not Found for url: https://railway.gov.bd/site/notices. Retrying in 10 seconds... (Attempt 2/3)
+2025-07-06 10:45:33,047 - ERROR - Error fetching https://railway.gov.bd/site/notices after 3 attempts: 404 Client Error: Not Found for url: https://railway.gov.bd/site/notices
+2025-07-06 10:45:33,047 - ERROR - Error parsing content from Bangladesh Railway: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+2025-07-06 10:45:33,047 - INFO - No updates found from sources, adding default content
+2025-07-06 10:45:33,048 - INFO - Total updates collected: 1
+2025-07-06 10:45:33,048 - INFO - No existing feed file found at metro_feed.xml. Starting fresh.
+2025-07-06 10:45:33,048 - INFO - New update found: GUID metro-timings-default Title: Dhaka Metro Timetable Available
+2025-07-06 10:45:33,048 - INFO - New updates detected based on GUID comparison. Generating updated RSS feed.
+2025-07-06 10:45:33,048 - INFO - Generating new RSS feed...
+2025-07-06 10:45:33,048 - INFO - Adding 1 new item(s) based on GUID comparison.
+2025-07-06 10:45:33,049 - INFO - Sorting 1 combined items by publication date (newest first)...
+2025-07-06 10:45:33,049 - INFO - Added 1 total items to the feed XML.
+2025-07-06 10:45:33,052 - INFO - RSS feed successfully generated and saved to metro_feed.xml
+2025-07-06 10:45:33,053 - INFO - Process finished. Duration: 0:00:33.774026

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <atom:link href="https://owais5514.github.io/Metro-timings/metro_feed.xml" rel="self" type="application/rss+xml"/>
+    <title>Dhaka Metro &amp; Public Transport Updates</title>
+    <link>https://owais5514.github.io/Metro-timings/</link>
+    <description>Latest updates on Dhaka Metro Rail (MRT), public transport, and transit announcements.</description>
+    <language>en-US</language>
+    <copyright>Metro Timings</copyright>
+    <lastBuildDate>Sun, 06 Jul 2025 10:45:33 +0000</lastBuildDate>
+    <generator>Metro RSS Generator Script</generator>
+    <version>1.0.20250706.104533</version>
+    <item>
+      <title>Dhaka Metro Timetable Available</title>
+      <link>https://owais5514.github.io/Metro-timings/</link>
+      <description>Check the latest Dhaka MRT-6 metro timetable and schedule information.</description>
+      <pubDate>Sun, 06 Jul 2025 10:45:33 +0000</pubDate>
+      <guid isPermaLink="true">metro-timings-default</guid>
+    </item>
+  </channel>
+</rss>
